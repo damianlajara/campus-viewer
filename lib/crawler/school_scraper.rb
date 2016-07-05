@@ -1,5 +1,6 @@
 require "open-uri"
 require "json"
+require "nokogiri"
 
 class SchoolScraper
   attr_reader :html, :type

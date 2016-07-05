@@ -18,8 +18,8 @@ class AllAboutSchools
     puts "\n#{filler*amount} #{header} #{filler*amount}"
   end
 
-  def display(school)
-    school.each.with_index { |school, index| puts "#{index.next}. #{school.name}\n    #{school.address}\n    #{school.phone_number}\n    #{school.website}" }
+  def display(schools)
+    schools.each.with_index { |school, index| puts "#{index.next}. #{school.name}\n    #{school.address}\n    #{school.phone_number}\n    #{school.website}" }
   end
 
   def get_user_input
@@ -52,8 +52,8 @@ class AllAboutSchools
     view_map_selector schools
   end
 
-  def parse_schools(schools, saved)
-    saved ? schools.read_file : schools.filter_schools
+  def parse_schools(scraper, saved)
+    saved ? scraper.read_file : scraper.filter_schools
   end
 
   def process_suny_schools
