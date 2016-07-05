@@ -43,7 +43,7 @@ class AllAboutSchools
   end
 
   def process_cuny_schools
-    cuny_saved = File.exist? 'lib/parsed_datas/cuny_school_info.json'
+    cuny_saved = File.exist? 'lib/parsed_data/cuny_school_info.json'
     url = "#{CUNY_BASE_URL}/about/colleges-schools/"
     school_scraper = SchoolScraper.new url: url, type: 'cuny'
     schools = parse_schools school_scraper, cuny_saved
@@ -57,7 +57,7 @@ class AllAboutSchools
   end
 
   def process_suny_schools
-    suny_saved = File.exist? 'lib/parsed_datas/suny_school_info.json'
+    suny_saved = File.exist? 'lib/parsed_data/suny_school_info.json'
     url = "#{SUNY_BASE_URL}/attend/visit-us/complete-campus-list/"
     school_scraper = SchoolScraper.new url: url, type: 'suny'
     schools = parse_schools school_scraper, suny_saved

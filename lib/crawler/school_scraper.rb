@@ -9,6 +9,8 @@ require_relative '../helpers/school_constants'
 class SchoolScraper
   attr_reader :html, :type
 
+  DEFAULT = 'N/A'.freeze
+
   def initialize(school_info = {})
     raise ArgumentError.new('You need to pass an url and a type to SchoolScraper #new') if school_info.empty?
     @type = school_info[:type]
@@ -39,6 +41,16 @@ class SchoolScraper
   end
 
   def read_file
+    show_loading "Reading from file for school data"
+    school_hash = JSON.parse(File.read("lib/parsed_data/#{@type}_school_info.json"))
+    school_hash.map.with_index do |(name, info),index|
+      school = School.new(name)
+      school.website = info["website"].strip
+      school.campusview = info["campusview"].strip
+      school.address = info["address"].strip
+      school.phone_number = info["phone_number"].strip
+      school
+    end
   end
 
   def filter_schools
@@ -56,6 +68,10 @@ class SchoolScraper
     end
   end
 
+  def validate(string)
+    string.nil? || string.strip.empty? ? DEFAULT : string
+  end
+
   def scrape_cuny
     cuny_school_file = File.open('lib/parsed_data/cuny_school_info.json', 'w+')
     @list_of_scraped_schools.each_with_index do |paragraph, index|
@@ -69,17 +85,16 @@ class SchoolScraper
       # simply redirects you to the original site http://sph.cuny.edu/. Due to this, we will have to scrape the actual school page.
       # Which is why we are checking for the url: %r{http://sph.cuny.edu/}
       new_site = Nokogiri::HTML(open(url))
-      # binding.pry if index == 22
       if url =~ /http:\/\/sph.cuny.edu\/ | cuny-school-of-public-health/ix
-        cuny_school.address = new_site.at_css('footer li:nth-child(1)')
-        cuny_school.phone_number = new_site.at_css('footer li:nth-child(2)')
-        cuny_school.website = url
+        cuny_school.address = validate new_site.at_css('footer li:nth-child(1)').text
+        cuny_school.phone_number = validate new_site.at_css('footer li:nth-child(2)').text
+        cuny_school.website = validate url
         cuny_school.campusview = 'https://www.google.com/maps/place/CUNY+School+of+Public+Health/@40.8074856,-73.9463553,17z/data=!3m1!4b1!4m5!3m4!1s0x89c2f608f665c73d:0x6f8434f027cbce57!8m2!3d40.8074856!4d-73.9441666?hl=en'
       else
-        cuny_school.address = info.join ' '
-        cuny_school.phone_number = new_site.css('.vc_col-sm-8 .vc_align_left+ .box-white p').text.scan(/Phone: (.+\b)/).join
-        cuny_school.website = new_site.at_css('div.wpb_wrapper a:nth-child(3)').attribute('href').value
-        cuny_school.campusview = new_site.at_css('div.wpb_wrapper p a').attribute('href').value
+        cuny_school.address = validate info.join ' '
+        cuny_school.phone_number = validate new_site.css('.vc_col-sm-8 .vc_align_left+ .box-white p').text.scan(/Phone: (.+\b)/).join
+        cuny_school.website = validate new_site.at_css('div.wpb_wrapper a:nth-child(3)').attribute('href').value
+        cuny_school.campusview = validate new_site.at_css('div.wpb_wrapper p a').attribute('href').value
       end
       add_school(cuny_school)
       @progress_bar.increment
