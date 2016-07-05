@@ -14,8 +14,8 @@ class AllAboutSchools
     run
   end
 
-  def display_header(header, filler='*~', amount=3)
-    puts "\n#{filler*amount} #{header} #{filler*amount}"
+  def display_header(header, filler = '*~', amount = 3)
+    puts "\n#{filler * amount} #{header} #{filler * amount}"
   end
 
   def display(schools)
@@ -26,12 +26,12 @@ class AllAboutSchools
     gets.chomp.strip
   end
 
-  def invalid
-    puts "Error: That command is Invalid."
+  def invalid(option = 'command')
+    puts "Error: That #{option} is Invalid."
   end
 
   def run
-    print "What would you like to do? "
+    print 'What would you like to do? '
     case get_user_input.downcase
     when /c|cuny/ then process_cuny_schools
     when /s|suny/ then process_suny_schools
@@ -78,7 +78,11 @@ class AllAboutSchools
   def select_campus(schools)
     print 'Select a number: '
     number = get_user_input.to_i
-    open_campus_view schools[number.pred]
+    if (1..schools.count).to_a.include? number
+      open_campus_view schools[number.pred]
+    else
+      invalid 'number'
+    end
   end
 
   def open_campus_view(school)
@@ -93,7 +97,7 @@ class AllAboutSchools
   end
 
   def terminate_program
-    puts "Hope you liked Campus Viewer. Hope to see you soon!"
+    puts 'Hope you liked Campus Viewer. Hope to see you soon!'
     exit
   end
 end
