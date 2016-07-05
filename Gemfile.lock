@@ -28,6 +28,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.5.0)
     rspec-support (3.5.0)
+    ruby-progressbar (1.8.1)
     slop (3.6.0)
 
 PLATFORMS
@@ -38,6 +39,7 @@ DEPENDENCIES
   pry
   pry-nav
   rspec
+  ruby-progressbar
 
 BUNDLED WITH
    1.12.1

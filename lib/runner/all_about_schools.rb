@@ -1,8 +1,8 @@
 require_relative '../crawler/school_scraper'
+require_relative '../helpers/school_constants'
 
 class AllAboutSchools
-  CUNY_BASE_URL = 'http://www2.cuny.edu'.freeze
-  SUNY_BASE_URL = 'http://www.suny.edu'.freeze
+  include SchoolConstants
 
   def self.run
     new.call
@@ -43,7 +43,7 @@ class AllAboutSchools
   end
 
   def process_cuny_schools
-    cuny_saved = File.exist? 'app/lib/cuny_school_info.json'
+    cuny_saved = File.exist? 'lib/parsed_datas/cuny_school_info.json'
     url = "#{CUNY_BASE_URL}/about/colleges-schools/"
     school_scraper = SchoolScraper.new url: url, type: 'cuny'
     schools = parse_schools school_scraper, cuny_saved
@@ -57,7 +57,7 @@ class AllAboutSchools
   end
 
   def process_suny_schools
-    suny_saved = File.exist? 'app/lib/suny_school_info.json'
+    suny_saved = File.exist? 'lib/parsed_datas/suny_school_info.json'
     url = "#{SUNY_BASE_URL}/attend/visit-us/complete-campus-list/"
     school_scraper = SchoolScraper.new url: url, type: 'suny'
     schools = parse_schools school_scraper, suny_saved
@@ -69,13 +69,13 @@ class AllAboutSchools
   def view_map_selector(schools)
     print 'Would you like to see a school? (Y)es or (N)o: '
     case get_user_input.downcase
-    when /y|yes/ then select_campus
+    when /y|yes/ then select_campus(schools)
     when /n|no/ then puts 'Aww man. The campus viewer is pretty cool! Maybe next time.'
     else invalid
     end
   end
 
-  def select_campus
+  def select_campus(schools)
     print 'Select a number: '
     number = get_user_input.to_i
     open_campus_view schools[number.pred]
@@ -86,7 +86,7 @@ class AllAboutSchools
   end
 
   def display_help
-    puts "Type 'c' or 'cuny' to search through cuny schools"
+    puts "\nType 'c' or 'cuny' to search through cuny schools"
     puts "Type 's' or 'suny' to search through suny schools"
     puts "Type 'h' or 'help' to view this menu again"
     puts "Type 'q', 'e' 'quit', or 'exit' to exit\n\n"
