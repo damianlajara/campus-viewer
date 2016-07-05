@@ -122,10 +122,10 @@ class SchoolScraper
   end
 
   def add_school(school)
-    @school_hash[school.name][:website] = school.website || 'N/A'
-    @school_hash[school.name][:campusview] = school.campusview || 'N/A'
-    @school_hash[school.name][:phone_number] = school.phone_number || 'N/A'
-    @school_hash[school.name][:address] = school.address || 'N/A'
+    @school_hash[school.name][:website] = school.website
+    @school_hash[school.name][:campusview] = school.campusview
+    @school_hash[school.name][:phone_number] = school.phone_number
+    @school_hash[school.name][:address] = school.address
     @schools << school
   end
 end
